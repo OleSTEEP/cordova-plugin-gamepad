@@ -11,6 +11,7 @@ package com.vladstirbu.cordova;
 
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
@@ -76,7 +77,12 @@ public class Gamepad extends CordovaPlugin {
 	@Override
 	public Object onMessage(String id, Object data) {
 		if (data instanceof KeyEvent && id.equals("gamepad-plugin")) {
-			PluginResult result = new PluginResult(PluginResult.Status.OK, processEvent((KeyEvent) data));
+			PluginResult result = new PluginResult(PluginResult.Status.OK, processKeyEvent((KeyEvent) data));
+			result.setKeepCallback(true);
+			callback.sendPluginResult(result);
+			return true;
+		} else if (data instanceof MotionEvent && id.equals("gamepad-plugin")) {
+			PluginResult result = new PluginResult(PluginResult.Status.OK, processMotionEvent((MotionEvent) data));
 			result.setKeepCallback(true);
 			callback.sendPluginResult(result);
 			return true;
@@ -88,7 +94,7 @@ public class Gamepad extends CordovaPlugin {
 	/*
 	 * Processes the event and returns the result to be passed to webview
 	 */
-	private JSONObject processEvent(KeyEvent event) {
+	private JSONObject processKeyEvent(KeyEvent event) {
 		String key = KeyEvent.keyCodeToString(event.getKeyCode());
 		String eventType;
 		JSONObject data = new JSONObject();
@@ -111,6 +117,22 @@ public class Gamepad extends CordovaPlugin {
 			}
 		}
 
+		return data;
+	}
+
+	private JSONObject processMotionEvent(MotionEvent event) {
+		String eventType = "MotionEvent";
+		JSONObject data = new JSONObject();
+
+		try {
+			data.put("type", eventType);
+			data.put("x", event.getX());
+			data.put("y", event.getY());
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return data;
 	}
 }
