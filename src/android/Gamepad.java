@@ -30,6 +30,7 @@ public class Gamepad extends CordovaPlugin {
 	private Integer[] buttons = new Integer[17];
 	private Hashtable<String, Integer> map = new Hashtable<String, Integer>();
 	private CallbackContext callback;
+	private String prevDPad;
 
 	/**
 	 * @param cordova The context of the main Activity.
@@ -121,18 +122,60 @@ public class Gamepad extends CordovaPlugin {
 	}
 
 	private JSONObject processMotionEvent(MotionEvent event) {
-		String eventType = "MotionEvent";
 		JSONObject data = new JSONObject();
+		String dpadKey = null;
+		String eventType;
 
+		// DPad
+		float xaxis = event.getAxisValue(MotionEvent.AXIS_HAT_X);
+		float yaxis = event.getAxisValue(MotionEvent.AXIS_HAT_Y);
+
+		if (xaxis != 0 || yaxis != 0 || prevDPad == null) {
+			eventType = "GamepadButtonDown";
+			if (Float.compare(xaxis, -1.0f) == 0) {
+				dpadKey = "KEYCODE_DPAD_LEFT";
+				buttons[map.get(dpadKey)] = 1;
+			} else if (Float.compare(xaxis, 1.0f) == 0) {
+				dpadKey = "KEYCODE_DPAD_RIGHT";
+				buttons[map.get(dpadKey)] = 1;
+			} else if (Float.compare(yaxis, -1.0f) == 0) {
+				dpadKey = "KEYCODE_DPAD_UP";
+				buttons[map.get(dpadKey)] = 1;
+			} else if (Float.compare(yaxis, 1.0f) == 0) {
+				dpadKey = "KEYCODE_DPAD_DOWN";
+				buttons[map.get(dpadKey)] = 1;
+			}
+			prevDPad = dpadKey;
+		} else {
+			eventType = "GamepadButtonUp";
+			buttons[map.get(prevDPad)] = 0;
+			dpadKey = prevDPad;
+			prevDPad = null;
+		}
+
+		if (dpadKey != null) {
+			Log.d("GAMEPAD", "DPAD EVENT");
+			try {
+				data.put("type", eventType);
+				data.put("button", map.get(dpadKey));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return data;
+		}
+
+		// Sticks
+		Log.d("GAMEPAD", "MOTION EVENT");
 		try {
+			eventType = "MotionEvent";
 			data.put("type", eventType);
-			data.put("x", event.getX());
-			data.put("y", event.getY());
+			data.put("x", event.getAxisValue(MotionEvent.AXIS_X));
+			data.put("y", event.getAxisValue(MotionEvent.AXIS_Y));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		return data;
 	}
 }

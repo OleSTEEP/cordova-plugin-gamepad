@@ -17,8 +17,8 @@ public class CordovaActivity extends org.apache.cordova.CordovaActivity {
 
     @Override
     public boolean dispatchGenericMotionEvent(MotionEvent event) {
-        if ((event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD
-                || ((event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK)) {
+        if ((event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK &&
+                event.getAction() == MotionEvent.ACTION_MOVE) {
  
             this.appView.getPluginManager().postMessage("gamepad-plugin", event);
             return true;
