@@ -154,7 +154,6 @@ public class Gamepad extends CordovaPlugin {
 		}
 
 		if (dpadKey != null) {
-			Log.d("GAMEPAD", "DPAD EVENT");
 			try {
 				data.put("type", eventType);
 				data.put("button", map.get(dpadKey));
@@ -166,12 +165,13 @@ public class Gamepad extends CordovaPlugin {
 		}
 
 		// Sticks
-		Log.d("GAMEPAD", "MOTION EVENT");
 		try {
 			eventType = "MotionEvent";
 			data.put("type", eventType);
 			data.put("x", event.getAxisValue(MotionEvent.AXIS_X));
 			data.put("y", event.getAxisValue(MotionEvent.AXIS_Y));
+			data.put("rx", event.getAxisValue(MotionEvent.AXIS_Z));
+			data.put("ry", event.getAxisValue(MotionEvent.AXIS_RZ));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

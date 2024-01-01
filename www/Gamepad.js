@@ -127,10 +127,11 @@ var GamepadPlugin = function (window, navigator) {
         gamepad: _gamepads[index]
       });
     }
-    console.log(e.x);
 
     _gamepads[index].axes[0] = e.x;
     _gamepads[index].axes[1] = e.y;
+    _gamepads[index].axes[2] = e.rx;
+    _gamepads[index].axes[3] = e.ry;
   }
 
   /*
