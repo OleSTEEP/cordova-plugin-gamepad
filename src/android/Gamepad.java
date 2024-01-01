@@ -40,10 +40,10 @@ public class Gamepad extends CordovaPlugin {
 
 		super.initialize(cordova, webView);
 
-		this.map.put("KEYCODE_BUTTON_B", 0);
-		this.map.put("KEYCODE_BUTTON_A", 1);
-		this.map.put("KEYCODE_BUTTON_Y", 2);
-		this.map.put("KEYCODE_BUTTON_X", 3);
+		this.map.put("KEYCODE_BUTTON_A", 0);
+		this.map.put("KEYCODE_BUTTON_B", 1);
+		this.map.put("KEYCODE_BUTTON_X", 2);
+		this.map.put("KEYCODE_BUTTON_Y", 3);
 		this.map.put("KEYCODE_BUTTON_L1", 4);
 		this.map.put("KEYCODE_BUTTON_R1", 5);
 		this.map.put("KEYCODE_BUTTON_L2", 6);
@@ -132,7 +132,7 @@ public class Gamepad extends CordovaPlugin {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return data;
 	}
 }
