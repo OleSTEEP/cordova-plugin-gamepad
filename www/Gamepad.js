@@ -92,9 +92,8 @@ var GamepadPlugin = function (window, navigator) {
     }
   }
 
-  function buttonHandler(e, pressed) {
+  function connectGamepad(e) {
     var index = 0;
-
     if (isNewGamepad(e)) {
       addGamepad(e);
       //console.log('gamepad added');
@@ -103,7 +102,11 @@ var GamepadPlugin = function (window, navigator) {
         gamepad: _gamepads[index]
       });
     }
+  }
 
+  function buttonHandler(e, pressed) {
+    connectGamepad(e);
+    var index = 0;
     // update gamepad
     if (_gamepads[index].buttons[e.button].pressed !== pressed) {
       _gamepads[index].buttons[e.button].pressed = pressed;
@@ -118,20 +121,30 @@ var GamepadPlugin = function (window, navigator) {
   }
 
   function axisHandler(e) {
+    connectGamepad(e);
     var index = 0;
-    if (isNewGamepad(e)) {
-      addGamepad(e);
-      //console.log('gamepad added');
-
-      cordova.fireWindowEvent('gamepadconnected', {
-        gamepad: _gamepads[index]
-      });
-    }
-
+    var threshold = 0.5;
     _gamepads[index].axes[0] = e.x;
     _gamepads[index].axes[1] = e.y;
     _gamepads[index].axes[2] = e.rx;
     _gamepads[index].axes[3] = e.ry;
+
+    if (e.yaxis === 0) {
+      _gamepads[index].buttons[12].pressed = false;
+      _gamepads[index].buttons[13].pressed = false;
+    } else if (e.yaxis < -threshold) {
+      _gamepads[index].buttons[12].pressed = true;    // dpad up
+    } else if (e.yaxis > threshold) {
+      _gamepads[index].buttons[13].pressed = true;    // dpad down
+    }
+    if (e.xaxis === 0) {
+      _gamepads[index].buttons[14].pressed = false;
+      _gamepads[index].buttons[15].pressed = false;
+    } else if (e.xaxis < -threshold) {
+      _gamepads[index].buttons[14].pressed = true;    // dpad left
+    } else if (e.xaxis > threshold) {
+      _gamepads[index].buttons[15].pressed = true;    // dpad right
+    }
   }
 
   /*
